@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 mongoose.connect("mongodb+srv://khushboobabil12:khushboo12345@cluster0.j9hng.mongodb.net/testgroup27Database", {useNewUrlParser: true})
-    .then(() => console.log('mongodb running on 27017'))
+    .then(() => console.log('mongodb connected !! Lets Go'))
     .catch(err => console.log(err))
 
 app.use('/', route);

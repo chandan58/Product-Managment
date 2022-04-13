@@ -1,42 +1,11 @@
 
 const productModel = require("../models/productModel")
-const aws = require("aws-sdk")
+const awsdk = require("aws-sdk")
 const mongoose = require("mongoose")
+const aws = require ("../aws/aws.js")
 
-//Connection to  AWS
-aws.config.update(
-  {
-      accessKeyId: "AKIAY3L35MCRVFM24Q7U",
-      secretAccessKey: "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",
-      region: "ap-south-1"
-  }
-)
 
-//uploading An Image File to AWS
-let uploadFile = async (file) => {
-  return new Promise(function (resolve, reject) {
 
-      let s3 = new aws.S3({ apiVersion: "2006-03-01" })
-
-      var uploadParams = {
-          ACL: "public-read",
-          Bucket: "classroom-training-bucket",
-          Key: "khushboo/" + file.originalname,
-          Body: file.buffer
-      }
-      console.log(uploadFile)
-      s3.upload(uploadParams, function (err, data) {
-          if (err) {
-              return reject({ "error": err })
-          }
-
-          return resolve(data.Location)
-      }
-      )
-
-  }
-  )
-}
 
 const isValid = function (value) {
     if (typeof value == undefined || value == null) return false
@@ -85,7 +54,7 @@ const createProduct = async function (req, res) {
         let files = req.files 
    
     if (files && files.length > 0) {
-        let productImage = await uploadFile(files[0])    
+        let productImage = await aws.uploadFile(files[0])    
 
         let savedData = await productModel.create({ title, description, price, currencyId, currencyFormat, productImage, style, availableSizes});
 
@@ -95,7 +64,16 @@ const createProduct = async function (req, res) {
         return res.status(500).send({ status: false, message: error.message });
     }
 };
-module.exports.createProduct = createProduct
+
+//filter product.............................................
+// const filterProduct = async function(req,res){
+//     try{
+//         let productId = req.query.productId
+
+//     }catch(error){
+//         return res.status(500).send({ status: false, message: error.message });
+//     }
+// }
 
 //get Product................................................
 const getProduct = async function (req, res) {
@@ -109,7 +87,7 @@ const getProduct = async function (req, res) {
 
         if (!productDetails) { return res.status(404).send({ status: false, message: "No data found" }) }
 
-        return res.status(200).send({ status: true, message: "Book Data", data: productDetails })
+        return res.status(200).send({ status: true, message: " Data", data: productDetails })
     }
 
     catch (error) {
@@ -118,7 +96,7 @@ const getProduct = async function (req, res) {
 
 
 }
-module.exports.getProduct = getProduct
+
 
 
 //update product........................................................
@@ -151,7 +129,7 @@ const updateProduct = async function (req, res) {
         res.status(500).send({ status: false, msg: error.message });
     }
 }
-module.exports.updateProduct = updateProduct
+
 
 
 
@@ -192,4 +170,4 @@ const deleteProduct = async function (req, res) {
 
 }
 
-module.exports.deleteProduct = deleteProduct
+module.exports = {createProduct,getProduct,updateProduct,deleteProduct}

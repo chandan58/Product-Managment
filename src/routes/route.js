@@ -10,11 +10,11 @@ const middleware = require("../middleware/middleware")
 
 router.post("/register", userController.createUser);
 
-router.post("/login", userController.login);
+router.post("/login", userController.loginUser);
 
 router.get("/user/:userId/profile", middleware.authentication, userController.getUser);
 
-router.put("/user/:userId/profile", middleware.authentication, middleware.authorization, userController.updateUser);
+router.put("/user/:userId/profile", middleware.authentication, middleware.authorization, userController.userUpdate);
 
 //product...........................................
 
